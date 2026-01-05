@@ -26,6 +26,6 @@ COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
 
 # Environment variables to let you override DB connection from docker run
-ENV SPRING_PROFILES_ACTIVE=default
+ENV SPRING_PROFILES_ACTIVE=dev
 
 ENTRYPOINT ["java","-jar","app.jar"]
