@@ -1,18 +1,18 @@
 # Multi-stage build for Social Insurance Service (Health Insurance Only)
 
 # ===== Build stage =====
-FROM gradle:8.15-jdk21 AS build
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 
 WORKDIR /app
 
-# Copy Gradle wrapper and build files first (for better layer cache)
-COPY build.gradle ./
+# Copy Maven files first (for better layer cache)
+COPY pom.xml ./
 
 # Copy source code
 COPY src src
 
-# Build executable jar using gradle command directly
-RUN gradle bootJar --no-daemon
+# Build executable jar
+RUN mvn clean package -DskipTests
 
 # ===== Runtime stage =====
 FROM eclipse-temurin:21-jre
@@ -20,7 +20,7 @@ FROM eclipse-temurin:21-jre
 WORKDIR /app
 
 # Copy jar from build stage
-COPY --from=build /app/build/libs/*.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 
 # Expose application port
 EXPOSE 9003
