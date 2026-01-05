@@ -1,7 +1,7 @@
 # Multi-stage build for Social Insurance Service (Health Insurance Only)
 
 # ===== Build stage =====
-FROM gradle:8.10.0-jdk21-alpine AS build
+FROM gradle:8.14.0-jdk21-alpine AS build
 
 WORKDIR /app
 
@@ -9,7 +9,7 @@ WORKDIR /app
 COPY build.gradle ./
 
 # Generate Gradle wrapper first
-RUN gradle wrapper --gradle-version 8.10.0
+RUN gradle wrapper --gradle-version 8.14.0
 
 # Copy source code
 COPY src src
