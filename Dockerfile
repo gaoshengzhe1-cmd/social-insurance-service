@@ -1,7 +1,7 @@
 # Multi-stage build for Social Insurance Service (Health Insurance Only)
 
 # ===== Build stage =====
-FROM gradle:8.15-jdk21-alpine AS build
+FROM gradle:8.15-jdk21 AS build
 
 WORKDIR /app
 
@@ -15,7 +15,7 @@ COPY src src
 RUN gradle bootJar --no-daemon
 
 # ===== Runtime stage =====
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
