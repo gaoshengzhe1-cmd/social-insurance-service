@@ -1,13 +1,13 @@
 package jp.asatex.ggsz.socialinsurance.service.impl;
 
 import jp.asatex.ggsz.socialinsurance.dto.SocialInsuranceDto;
-import jp.asatex.ggsz.socialinsurance.entity.PremiumBracket;
 import jp.asatex.ggsz.socialinsurance.repository.PremiumBracketRepository;
 import jp.asatex.ggsz.socialinsurance.service.SocialInsuranceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -23,7 +23,7 @@ public class SocialInsuranceServiceImpl implements SocialInsuranceService {
     private final PremiumBracketRepository premiumBracketRepository;
 
     @Override
-    public SocialInsuranceDto calculateHealthInsurance(Integer monthlySalary, Integer age) {
+    public Mono<SocialInsuranceDto> calculateHealthInsurance(Integer monthlySalary, Integer age) {
         return premiumBracketRepository.findBracketByAmount(monthlySalary)
                 .map(bracket -> {
                     // 计算健康保险（个人负担50%）
@@ -52,7 +52,6 @@ public class SocialInsuranceServiceImpl implements SocialInsuranceService {
                                     .careCost(employeeCare)
                                     .build())
                             .build();
-                })
-                .block();
+                });
     }
 }

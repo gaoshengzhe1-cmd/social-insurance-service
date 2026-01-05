@@ -7,8 +7,9 @@ WORKDIR /app
 
 # Copy Gradle wrapper and build files first (for better layer cache)
 COPY build.gradle ./
-COPY gradle gradle
-COPY gradlew gradlew.bat ./
+
+# Generate Gradle wrapper first
+RUN gradle wrapper --gradle-version 8.10.0
 
 # Copy source code
 COPY src src

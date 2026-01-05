@@ -24,7 +24,7 @@ public class SocialInsuranceController {
         
         log.info("收到健康保险计算请求: monthlySalary={}, age={}", monthlySalary, age);
         
-        return Mono.fromCallable(() -> socialInsuranceService.calculateHealthInsurance(monthlySalary, age))
+        return socialInsuranceService.calculateHealthInsurance(monthlySalary, age)
                 .map(ResponseEntity::ok)
                 .onErrorResume(e -> {
                     log.error("处理健康保险计算请求时发生错误: {}", e.getMessage(), e);
