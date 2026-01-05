@@ -17,6 +17,11 @@ public class SocialInsuranceController {
 
     private final SocialInsuranceService socialInsuranceService;
 
+    @GetMapping("/")
+    public ResponseEntity<String> health() {
+        return ResponseEntity.ok("Social Insurance Service is running");
+    }
+
     @GetMapping("/calculate")
     public Mono<ResponseEntity<SocialInsuranceDto>> calculateHealthInsurance(
             @RequestParam Integer monthlySalary,
