@@ -1,6 +1,7 @@
 package jp.asatex.ggsz.socialinsurance.service.impl;
 
 import jp.asatex.ggsz.socialinsurance.dto.SocialInsuranceDto;
+import jp.asatex.ggsz.socialinsurance.entity.PremiumBracket;
 import jp.asatex.ggsz.socialinsurance.repository.PremiumBracketRepository;
 import jp.asatex.ggsz.socialinsurance.service.SocialInsuranceService;
 import lombok.RequiredArgsConstructor;
