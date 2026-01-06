@@ -29,7 +29,7 @@ public class IncomeTaxServiceImpl implements IncomeTaxService {
     }
 
     private BigDecimal getTaxAmountByDependents(IncomeTaxBracket bracket, Integer dependentsCount) {
-        return switch (dependentsCount) {
+        BigDecimal amount = switch (dependentsCount) {
             case 0 -> bracket.getDependents0();
             case 1 -> bracket.getDependents1();
             case 2 -> bracket.getDependents2();
@@ -40,5 +40,6 @@ public class IncomeTaxServiceImpl implements IncomeTaxService {
             case 7 -> bracket.getDependents7();
             default -> throw new IllegalArgumentException("Unsupported number of dependents: " + dependentsCount);
         };
+        return amount != null ? amount : BigDecimal.ZERO;
     }
 }
