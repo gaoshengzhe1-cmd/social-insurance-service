@@ -6,6 +6,6 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Mono;
 
 public interface IncomeTaxBracketRepository extends ReactiveCrudRepository<IncomeTaxBracket, Long> {
-    @Query("SELECT * FROM income_tax_bracket WHERE ?1 > min_salary AND ?1 <= max_salary LIMIT 1")
+    @Query("SELECT * FROM income_tax_bracket WHERE ?1 >= min_salary AND ?1 < max_salary LIMIT 1")
     Mono<IncomeTaxBracket> findBracketBySalary(Integer salary);
 }
