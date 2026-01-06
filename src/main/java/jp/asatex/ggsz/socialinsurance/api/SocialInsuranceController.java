@@ -10,7 +10,6 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("/health-insurance")
 @RequiredArgsConstructor
 public class SocialInsuranceController {
@@ -20,6 +19,11 @@ public class SocialInsuranceController {
     @GetMapping("/")
     public ResponseEntity<String> health() {
         return ResponseEntity.ok("Social Insurance Service is running");
+    }
+
+    @RequestMapping(value = "/calculate", method = RequestMethod.OPTIONS)
+    public ResponseEntity<Void> handleOptions() {
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/calculate")
