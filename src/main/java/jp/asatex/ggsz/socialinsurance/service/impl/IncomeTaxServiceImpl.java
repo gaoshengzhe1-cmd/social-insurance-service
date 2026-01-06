@@ -18,6 +18,7 @@ public class IncomeTaxServiceImpl implements IncomeTaxService {
     @Override
     public Mono<BigDecimal> calculateIncomeTax(Integer monthlySalary, Integer dependentsCount) {
         return taxBracketRepository.findBracketBySalary(monthlySalary)
+            .next()
             .map(bracket -> getTaxAmountByDependents(bracket, dependentsCount))
             .defaultIfEmpty(BigDecimal.ZERO)
             .doOnNext(tax -> log.info("Calculated income tax: {} for salary: {}, dependents: {}", 
