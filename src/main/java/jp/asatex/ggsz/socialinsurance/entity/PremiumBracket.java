@@ -32,9 +32,6 @@ public class PremiumBracket {
     @Column("health_care")
     private BigDecimal healthCare;
     
-    @Column("pension")
-    private BigDecimal pension;
-    
     @Column("created_at")
     private LocalDateTime createdAt;
     

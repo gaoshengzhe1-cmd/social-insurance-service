@@ -30,7 +30,6 @@ public class PremiumBracketRepositoryImpl implements PremiumBracketRepository {
                     bracket.setMaxAmount(row.get("max_amount", Integer.class));
                     bracket.setHealthNoCare(row.get("health_no_care", java.math.BigDecimal.class));
                     bracket.setHealthCare(row.get("health_care", java.math.BigDecimal.class));
-                    bracket.setPension(row.get("pension", java.math.BigDecimal.class));
                     bracket.setCreatedAt(row.get("created_at", java.time.LocalDateTime.class));
                     bracket.setUpdatedAt(row.get("updated_at", java.time.LocalDateTime.class));
                     return bracket;
