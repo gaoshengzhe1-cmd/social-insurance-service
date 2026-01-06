@@ -21,8 +21,13 @@ public class IncomeTaxServiceImpl implements IncomeTaxService {
         return taxBracketRepository.findBracketBySalary(monthlySalary)
             .doOnNext(bracket -> log.info("Found tax bracket: {}", bracket))
             .next()
-            .filter(bracket -> bracket != null)
-            .map(bracket -> getTaxAmountByDependents(bracket, dependentsCount))
+            .flatMap(bracket -> {
+                if (bracket == null) {
+                    return Mono.empty();
+                }
+                BigDecimal amount = getTaxAmountByDependents(bracket, dependentsCount);
+                return amount != null ? Mono.just(amount) : Mono.empty();
+            })
             .defaultIfEmpty(BigDecimal.ZERO)
             .doOnNext(tax -> log.info("Calculated income tax: {} for salary: {}, dependents: {}", 
                 tax, monthlySalary, dependentsCount));
