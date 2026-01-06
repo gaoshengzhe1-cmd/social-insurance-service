@@ -3,6 +3,7 @@ package jp.asatex.ggsz.socialinsurance.service.impl;
 import jp.asatex.ggsz.socialinsurance.dto.SocialInsuranceDto;
 import jp.asatex.ggsz.socialinsurance.entity.PremiumBracket;
 import jp.asatex.ggsz.socialinsurance.repository.PremiumBracketRepository;
+import jp.asatex.ggsz.socialinsurance.service.IncomeTaxService;
 import jp.asatex.ggsz.socialinsurance.service.SocialInsuranceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +23,19 @@ public class SocialInsuranceServiceImpl implements SocialInsuranceService {
     private int careInsuranceAgeThreshold;
 
     private final PremiumBracketRepository premiumBracketRepository;
+    private final IncomeTaxService incomeTaxService;
 
     @Override
     public Mono<SocialInsuranceDto> calculateHealthInsurance(Integer monthlySalary, Integer age) {
+        // 计算源泉税（默认0个抚养亲属）
+        Mono<BigDecimal> incomeTaxMono = incomeTaxService.calculateIncomeTax(monthlySalary, 0);
+        
         return premiumBracketRepository.findBracketByAmount(monthlySalary)
-                .map(bracket -> {
+                .zipWith(incomeTaxMono)
+                .map(tuple -> {
+                    PremiumBracket bracket = tuple.getT1();
+                    BigDecimal incomeTax = tuple.getT2();
+                    
                     // 计算健康保险（个人负担50%）
                     BigDecimal employeeHealth = bracket.getHealthNoCare()
                             .divide(new BigDecimal("2"), 0, RoundingMode.HALF_UP);
@@ -47,6 +56,7 @@ public class SocialInsuranceServiceImpl implements SocialInsuranceService {
                             .employeeCost(SocialInsuranceDto.CostDetail.builder()
                                     .healthCostWithNoCare(employeeHealth)
                                     .careCost(employeeCare)
+                                    .incomeTax(incomeTax)  // 设置源泉税
                                     .build())
                             .employerCost(SocialInsuranceDto.CostDetail.builder()
                                     .healthCostWithNoCare(employeeHealth)
