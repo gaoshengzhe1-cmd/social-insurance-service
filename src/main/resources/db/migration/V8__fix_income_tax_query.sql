@@ -1,11 +1,8 @@
--- V7__update_2024_income_tax_brackets.sql
--- 更新2024年度（令和6年分）給与所得の源泉徴収税額表（月額表）のデータ
--- 88,000円から593,000円の区間を更新
-
--- 既存のテーブルを削除して再作成
+-- 彻底修复源泉税表问题
+-- 先删除表
 DROP TABLE IF EXISTS income_tax_bracket;
 
--- テーブルを再作成
+-- 重新创建表，确保没有约束问题
 CREATE TABLE income_tax_bracket (
     id BIGSERIAL PRIMARY KEY,
     min_salary INTEGER NOT NULL,
@@ -21,10 +18,10 @@ CREATE TABLE income_tax_bracket (
     tax_amount_col_b INTEGER NOT NULL DEFAULT 0
 );
 
--- インデックスを作成
+-- 创建索引以优化查询
 CREATE INDEX idx_income_tax_bracket_salary ON income_tax_bracket (min_salary, max_salary);
 
--- 新しいデータを挿入
+-- 插入数据，使用严格的范围条件：min_salary <= salary < max_salary
 INSERT INTO income_tax_bracket 
 (min_salary, max_salary, dependents_0, dependents_1, dependents_2, dependents_3, dependents_4, dependents_5, dependents_6, dependents_7, tax_amount_col_b)
 VALUES
@@ -277,6 +274,3 @@ VALUES
 (590000, 591000, 57540, 51080, 46020, 43790, 41150, 37320, 34360, 32540, 57540),
 (591000, 592000, 57630, 51180, 46120, 43890, 41180, 37350, 34380, 32560, 57630),
 (592000, 593000, 57720, 51280, 46220, 43990, 41210, 37380, 34400, 32580, 57720);
-
--- インデックスの再構築
-REINDEX INDEX IF EXISTS idx_income_tax_bracket_salary;
