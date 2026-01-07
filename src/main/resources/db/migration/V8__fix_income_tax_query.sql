@@ -10,15 +10,15 @@ CREATE TABLE income_tax_bracket (
     id BIGSERIAL PRIMARY KEY,
     min_salary INTEGER NOT NULL,
     max_salary INTEGER NOT NULL,
-    dependents0 DECIMAL(10,2),
-    dependents1 DECIMAL(10,2),
-    dependents2 DECIMAL(10,2),
-    dependents3 DECIMAL(10,2),
-    dependents4 DECIMAL(10,2),
-    dependents5 DECIMAL(10,2),
-    dependents6 DECIMAL(10,2),
-    dependents7 DECIMAL(10,2),
-    tax_amount_col_b DECIMAL(10,2)
+    dependents_0 INTEGER NOT NULL DEFAULT 0,
+    dependents_1 INTEGER NOT NULL DEFAULT 0,
+    dependents_2 INTEGER NOT NULL DEFAULT 0,
+    dependents_3 INTEGER NOT NULL DEFAULT 0,
+    dependents_4 INTEGER NOT NULL DEFAULT 0,
+    dependents_5 INTEGER NOT NULL DEFAULT 0,
+    dependents_6 INTEGER NOT NULL DEFAULT 0,
+    dependents_7 INTEGER NOT NULL DEFAULT 0,
+    tax_amount_col_b INTEGER NOT NULL DEFAULT 0
 );
 
 -- インデックスを作成
