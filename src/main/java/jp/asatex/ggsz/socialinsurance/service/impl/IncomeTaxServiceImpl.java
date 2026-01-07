@@ -17,46 +17,18 @@ public class IncomeTaxServiceImpl implements IncomeTaxService {
 
     @Override
     public Mono<BigDecimal> calculateIncomeTax(Integer monthlySalary, Integer dependentsCount) {
-        log.info("Querying tax bracket for salary: {}", monthlySalary);
+        log.info("查询工资: {} 的源泉税", monthlySalary);
         return taxBracketRepository.findBracketBySalary(monthlySalary)
-            .doOnNext(bracket -> log.info("Found tax bracket: {}", bracket))
-            .flatMap(bracket -> {
+            .map(bracket -> {
                 if (bracket == null) {
-                    return Mono.empty();
+                    log.warn("未找到工资 {} 对应的税率区间", monthlySalary);
+                    return BigDecimal.ZERO;
                 }
-                BigDecimal amount = getTaxAmountByDependents(bracket, dependentsCount);
-                return amount != null ? Mono.just(amount) : Mono.empty();
+                // 直接返回0人抚养的税额
+                BigDecimal taxAmount = bracket.getDependents0();
+                log.info("工资 {} 的源泉税 (0人抚养): {}", monthlySalary, taxAmount);
+                return taxAmount != null ? taxAmount : BigDecimal.ZERO;
             })
-            .defaultIfEmpty(BigDecimal.ZERO)
-            .doOnNext(tax -> log.info("Calculated income tax: {} for salary: {}, dependents: {}", 
-                tax, monthlySalary, dependentsCount));
-    }
-
-    private BigDecimal getTaxAmountByDependents(IncomeTaxBracket bracket, Integer dependentsCount) {
-        log.info("Getting tax amount for dependents: {}, bracket: {}", dependentsCount, bracket);
-        
-        BigDecimal amount = switch (dependentsCount) {
-            case 0 -> bracket.getDependents0();
-            case 1 -> bracket.getDependents1();
-            case 2 -> bracket.getDependents2();
-            case 3 -> bracket.getDependents3();
-            case 4 -> bracket.getDependents4();
-            case 5 -> bracket.getDependents5();
-            case 6 -> bracket.getDependents6();
-            case 7 -> bracket.getDependents7();
-            default -> throw new IllegalArgumentException("Unsupported number of dependents: " + dependentsCount);
-        };
-        
-        log.info("Raw tax amount for {} dependents: {}", dependentsCount, amount);
-        
-        // 如果 dependents 字段为 null，尝试使用 taxAmountColB
-        if (amount == null) {
-            log.warn("Dependents field is null, using taxAmountColB: {}", bracket.getTaxAmountColB());
-            amount = bracket.getTaxAmountColB();
-        }
-        
-        BigDecimal result = amount != null ? amount : BigDecimal.ZERO;
-        log.info("Final tax amount: {}", result);
-        return result;
+            .defaultIfEmpty(BigDecimal.ZERO);
     }
 }
