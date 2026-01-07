@@ -2,9 +2,27 @@
 -- 更新2024年度（令和6年分）給与所得の源泉徴収税額表（月額表）のデータ
 -- 88,000円から593,000円の区間を更新
 
--- 既存のデータを削除（88,000円から593,000円の範囲）
-DELETE FROM income_tax_bracket 
-WHERE min_salary >= 88000 AND max_salary <= 593000;
+-- 既存のテーブルを削除して再作成
+DROP TABLE IF EXISTS income_tax_bracket;
+
+-- テーブルを再作成
+CREATE TABLE income_tax_bracket (
+    id BIGSERIAL PRIMARY KEY,
+    min_salary INTEGER NOT NULL,
+    max_salary INTEGER NOT NULL,
+    dependents0 DECIMAL(10,2),
+    dependents1 DECIMAL(10,2),
+    dependents2 DECIMAL(10,2),
+    dependents3 DECIMAL(10,2),
+    dependents4 DECIMAL(10,2),
+    dependents5 DECIMAL(10,2),
+    dependents6 DECIMAL(10,2),
+    dependents7 DECIMAL(10,2),
+    tax_amount_col_b DECIMAL(10,2)
+);
+
+-- インデックスを作成
+CREATE INDEX idx_income_tax_bracket_salary ON income_tax_bracket (min_salary, max_salary);
 
 -- 新しいデータを挿入
 INSERT INTO income_tax_bracket 
