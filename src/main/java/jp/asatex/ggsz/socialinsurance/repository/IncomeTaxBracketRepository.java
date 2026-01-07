@@ -7,8 +7,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface IncomeTaxBracketRepository extends ReactiveCrudRepository<IncomeTaxBracket, Long> {
-    @Query("SELECT * FROM income_tax_bracket WHERE :salary >= min_salary AND :salary < max_salary ORDER BY min_salary DESC LIMIT 1")
-    Flux<IncomeTaxBracket> findBracketBySalary(Integer salary);
+    @Query("SELECT * FROM income_tax_bracket WHERE :salary >= min_salary AND :salary < max_salary LIMIT 1")
+    Mono<IncomeTaxBracket> findBracketBySalary(Integer salary);
     
     @Query("SELECT COUNT(*) FROM income_tax_bracket")
     Mono<Long> countAll();
