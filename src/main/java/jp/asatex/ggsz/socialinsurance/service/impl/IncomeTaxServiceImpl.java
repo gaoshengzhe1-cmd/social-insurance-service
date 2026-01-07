@@ -20,7 +20,6 @@ public class IncomeTaxServiceImpl implements IncomeTaxService {
         log.info("Querying tax bracket for salary: {}", monthlySalary);
         return taxBracketRepository.findBracketBySalary(monthlySalary)
             .doOnNext(bracket -> log.info("Found tax bracket: {}", bracket))
-            .next()
             .flatMap(bracket -> {
                 if (bracket == null) {
                     return Mono.empty();
