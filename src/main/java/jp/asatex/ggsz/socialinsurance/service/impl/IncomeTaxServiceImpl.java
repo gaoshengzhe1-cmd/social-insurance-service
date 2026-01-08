@@ -17,19 +17,23 @@ public class IncomeTaxServiceImpl implements IncomeTaxService {
 
     @Override
     public Mono<BigDecimal> calculateIncomeTax(Integer monthlySalary, Integer dependentsCount) {
-        log.info("Querying tax bracket for salary: {}", monthlySalary);
+        // Set default value of 0 if dependentsCount is null
+        int dependents = dependentsCount != null ? dependentsCount : 0;
+        log.info("Querying tax bracket for salary: {}, dependents: {}", monthlySalary, dependents);
+        
         return taxBracketRepository.findBracketBySalary(monthlySalary)
             .doOnNext(bracket -> log.info("Found tax bracket: {}", bracket))
             .flatMap(bracket -> {
                 if (bracket == null) {
+                    log.warn("No tax bracket found for salary: {}", monthlySalary);
                     return Mono.empty();
                 }
-                BigDecimal amount = getTaxAmountByDependents(bracket, dependentsCount);
+                BigDecimal amount = getTaxAmountByDependents(bracket, dependents);
                 return amount != null ? Mono.just(amount) : Mono.empty();
             })
             .defaultIfEmpty(BigDecimal.ZERO)
             .doOnNext(tax -> log.info("Calculated income tax: {} for salary: {}, dependents: {}", 
-                tax, monthlySalary, dependentsCount));
+                tax, monthlySalary, dependents));
     }
 
     private BigDecimal getTaxAmountByDependents(IncomeTaxBracket bracket, Integer dependentsCount) {
